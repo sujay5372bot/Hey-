@@ -1608,27 +1608,23 @@ async def cb_handler(client: Client, query: CallbackQuery):
 async def auto_filter(client, msg, spoll=False):
     curr_time = datetime.now(pytz.timezone('Asia/Kolkata')).time()
     if not spoll:
-    message = msg
-if message.text.startswith("/"):
-    return
-if re.findall(r"((^\/|^,|^!|^\.|^[\U0001F600-\U000E007F]).*)", message.text):
-    return
-
-if len(message.text) < 100:
-    search = message.text         
-    search = search.lower()
-    m = await message.reply_text(f'🤖 <i>{search} <b>sᴇᴀʀᴄʜɪɴɢ...</b></i>')
-    
-    find = search.split(" ")
-    search = ""
-    removes = ["in", "upload", "series", "full", "horror", "thriller", "mystery", "print", "file"]
-    
-    for x in find:
-        if x in removes:
-            continue
+        message = msg
+        if message.text.startswith("/"):
+        return
+        if re.findall(r"((^\/|^,|^!|^\.|^[\U0001F600-\U000E007F]).*)", message.text):
+            return
+        if len(message.text) < 100:
+        search = message.text         
+        search = search.lower()
+        m = await message.reply_text(f'🤖 <i>{search} <b>sᴇᴀʀᴄʜɪɴɢ...</b></i>')
+        find = search.split(" ")
+        search = ""
+        removes = ["in", "upload", "series", "full", "horror", "thriller", "mystery", "print", "file"]
+        for x in find:
+            if x in removes:
+                continue
         else:
             search += x + " "
-
     search = search.replace("-", " ")
     search = search.replace(":", "")
 
