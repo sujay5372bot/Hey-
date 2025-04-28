@@ -1668,8 +1668,8 @@ async def handle_close_data(callback_query: types.CallbackQuery):
                 message.text = is_misspelled
                 await ai_sts.delete()
                 return await auto_filter(client, message)
-                    await ai_sts.delete()
-            return await advantage_spell_chok(client, message)
+                await ai_sts.delete()
+                return await advantage_spell_chok(client, message)
         else:
             return
     else:
