@@ -1608,28 +1608,44 @@ async def cb_handler(client: Client, query: CallbackQuery):
 async def auto_filter(client, msg, spoll=False):
     curr_time = datetime.now(pytz.timezone('Asia/Kolkata')).time()
     if not spoll:
-        message = msg
-        if message.text.startswith("/"): return
-        if re.findall("((^\/|^,|^!|^\.|^[\U0001F600-\U000E007F]).*)", message.text):
-            return
-        if len(message.text) < 100:
-            search = message.text         
-            search = search.lower()
-            m=await message.reply_text(f'🤖 <i>{search} <b>sᴇᴀʀᴄʜɪɴɢ...</b></i>')
-            find = search.split(" ")
-            search = ""
-            removes = ["in","upload", "series", "full", "horror", "thriller", "mystery", "print", "file"]
-            for x in find:
-                if x in removes:
-                    continue
-                else:
-                    search = search + x + " "
-            search = search.replace("-", " ")
-            search = search.replace(":","")
-            files, offset, total_results = await get_search_results(message.chat.id ,search, offset=0, filter=True)
-            settings = await get_settings(message.chat.id)
-            if not files:
-                # --- CALLBACK HANDLER --- (ye bahar likhna hai, files ke if ke andar nahi)
+    message = msg
+    if message.text.startswith("/"):
+        return
+    if re.findall(r"((^\/|^,|^!|^\.|^[\U0001F600-\U000E007F]).*)", message.text):
+        return
+    if len(message.text) < 100:
+        search = message.text         
+        search = search.lower()
+        m = await message.reply_text(f'🤖 <i>{search} <b>sᴇᴀʀᴄʜɪɴɢ...</b></i>')
+        
+        find = search.split(" ")
+        search = ""
+        removes = ["in", "upload", "series", "full", "horror", "thriller", "mystery", "print", "file"]
+        
+        for x in find:
+            if x in removes:
+                continue
+            else:
+                search += x + " "
+
+        search = search.replace("-", " ")
+        search = search.replace(":", "")
+
+        files, offset, total_results = await get_search_results(message.chat.id, search, offset=0, filter=True)
+        settings = await get_settings(message.chat.id)
+
+        if not files:
+            await client.send_message(
+                req_channel,
+                f"🦋 **#REQUESTED_CONTENT** 🦋,\n\n📝**CONTENT NAME** : `{search}`\n**REQUESTED BY** : {message.from_user.first_name}\n **USER ID : **{message.from_user.id}\n\n🗃️",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [InlineKeyboardButton("🔺 Mark as Done 🔺", callback_data="close_data")]
+                    ]
+                )
+            )
+
+# --- CALLBACK HANDLER (ye if ke bahar hona chahiye) ---
 
 @dp.callback_query_handler(lambda c: c.data == 'close_data')
 async def handle_close_data(callback_query: types.CallbackQuery):
@@ -1643,20 +1659,6 @@ async def handle_close_data(callback_query: types.CallbackQuery):
     else:
         # Non-admin clicked
         await callback_query.answer("You are not authorized to perform this action.", show_alert=True)
-
-
-# --- APNI FILES CHECKING WAALI JAGAH PE (normal logic mein) ---
-
-if not files:
-    await client.send_message(
-        req_channel,
-        f"🦋 **#REQUESTED_CONTENT** 🦋,\n\n📝**CONTENT NAME** : `{search}`\n**REQUESTED BY** : {message.from_user.first_name}\n **USER ID : **{message.from_user.id}\n\n🗃️",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton("🔺 Mark as Done 🔺", callback_data="close_data")]
-            ]
-        )
-    )
                 if settings["spell_check"]:
                     ai_sts = await m.edit('🤖 ᴘʟᴇᴀꜱᴇ ᴡᴀɪᴛ, ᴀɪ ɪꜱ ᴄʜᴇᴄᴋɪɴɢ ʏᴏᴜʀ ꜱᴘᴇʟʟɪɴɢ...')
                     is_misspelled = await ai_spell_check(chat_id = message.chat.id,wrong_name=search)
