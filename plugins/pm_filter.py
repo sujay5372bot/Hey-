@@ -1659,17 +1659,17 @@ async def handle_close_data(callback_query: types.CallbackQuery):
     else:
         # Non-admin clicked
         await callback_query.answer("You are not authorized to perform this action.", show_alert=True)
-                if settings["spell_check"]:
-                    ai_sts = await m.edit('🤖 ᴘʟᴇᴀꜱᴇ ᴡᴀɪᴛ, ᴀɪ ɪꜱ ᴄʜᴇᴄᴋɪɴɢ ʏᴏᴜʀ ꜱᴘᴇʟʟɪɴɢ...')
-                    is_misspelled = await ai_spell_check(chat_id = message.chat.id,wrong_name=search)
-                    if is_misspelled:
-                        await ai_sts.edit(f'<b>✅Aɪ Sᴜɢɢᴇsᴛᴇᴅ ᴍᴇ<code> {is_misspelled}</code> \nSᴏ Iᴍ Sᴇᴀʀᴄʜɪɴɢ ғᴏʀ <code>{is_misspelled}</code></b>')
-                        await asyncio.sleep(2)
-                        message.text = is_misspelled
-                        await ai_sts.delete()
-                        return await auto_filter(client, message)
+        if settings["spell_check"]:
+            ai_sts = await m.edit('🤖 ᴘʟᴇᴀꜱᴇ ᴡᴀɪᴛ, ᴀɪ ɪꜱ ᴄʜᴇᴄᴋɪɴɢ ʏᴏᴜʀ ꜱᴘᴇʟʟɪɴɢ...')
+            is_misspelled = await ai_spell_check(chat_id = message.chat.id,wrong_name=search)
+            if is_misspelled:
+                await ai_sts.edit(f'<b>✅Aɪ Sᴜɢɢᴇsᴛᴇᴅ ᴍᴇ<code> {is_misspelled}</code> \nSᴏ Iᴍ Sᴇᴀʀᴄʜɪɴɢ ғᴏʀ <code>{is_misspelled}</code></b>')
+                await asyncio.sleep(2)
+                message.text = is_misspelled
+                await ai_sts.delete()
+                return await auto_filter(client, message)
                     await ai_sts.delete()
-                    return await advantage_spell_chok(client, message)
+            return await advantage_spell_chok(client, message)
         else:
             return
     else:
