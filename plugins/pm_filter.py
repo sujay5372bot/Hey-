@@ -1629,7 +1629,34 @@ async def auto_filter(client, msg, spoll=False):
             files, offset, total_results = await get_search_results(message.chat.id ,search, offset=0, filter=True)
             settings = await get_settings(message.chat.id)
             if not files:
-                await client.send_message(req_channel,f"🦋 **#REQUESTED_CONTENT** 🦋,\n\n📝**CONTENT NAME** : `{search}`\n**REQUESTED BY** : {message.from_user.first_name}\n **USER ID : **{message.from_user.id}\n\n🗃️",reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔺 Mark as Done 🔺", callback_data="close_data")]]))
+                # --- CALLBACK HANDLER --- (ye bahar likhna hai, files ke if ke andar nahi)
+
+@dp.callback_query_handler(lambda c: c.data == 'close_data')
+async def handle_close_data(callback_query: types.CallbackQuery):
+    admins = await req_channel.get_administrators()
+    admin_ids = [admin.user.id for admin in admins]
+
+    if callback_query.from_user.id in admin_ids:
+        # Admin clicked
+        await callback_query.message.edit_reply_markup(reply_markup=None)
+        await callback_query.answer("Marked as done!")
+    else:
+        # Non-admin clicked
+        await callback_query.answer("You are not authorized to perform this action.", show_alert=True)
+
+
+# --- APNI FILES CHECKING WAALI JAGAH PE (normal logic mein) ---
+
+if not files:
+    await client.send_message(
+        req_channel,
+        f"🦋 **#REQUESTED_CONTENT** 🦋,\n\n📝**CONTENT NAME** : `{search}`\n**REQUESTED BY** : {message.from_user.first_name}\n **USER ID : **{message.from_user.id}\n\n🗃️",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton("🔺 Mark as Done 🔺", callback_data="close_data")]
+            ]
+        )
+    )
                 if settings["spell_check"]:
                     ai_sts = await m.edit('🤖 ᴘʟᴇᴀꜱᴇ ᴡᴀɪᴛ, ᴀɪ ɪꜱ ᴄʜᴇᴄᴋɪɴɢ ʏᴏᴜʀ ꜱᴘᴇʟʟɪɴɢ...')
                     is_misspelled = await ai_spell_check(chat_id = message.chat.id,wrong_name=search)
