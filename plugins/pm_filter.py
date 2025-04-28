@@ -1616,6 +1616,7 @@ async def auto_filter(client, msg, spoll=False):
             search = message.text         
             search = search.lower()
             m=await message.reply_text(f'🤖 <i>{search} <b>sᴇᴀʀᴄʜɪɴɢ...</b></i>')
+            await m.delete()
             find = search.split(" ")
             search = ""
             removes = ["in","upload", "series", "full", "horror", "thriller", "mystery", "print", "file"]
@@ -1656,6 +1657,7 @@ async def auto_filter(client, msg, spoll=False):
         search, files, offset, total_results = spoll
         m=await message.reply_text(f'🤖 <i>{search} <b>sᴇᴀʀᴄʜɪɴɢ...</b></i>')
         settings = await get_settings(message.chat.id)
+        await m.delete()
         await msg.message.delete()
     pre = 'filep' if settings['file_secure'] else 'file'
     key = f"{message.chat.id}-{message.id}"
