@@ -1788,7 +1788,7 @@ async def auto_filter(client, msg, spoll=False):
                if settings['auto_delete']:
                     await asyncio.sleep(DELETE_TIME)
                     m=await message.reply_text(f"🤖 <i>{search} <b>sᴇᴀʀᴄʜɪɴɢ...</b></i>")
-                    await hmm.delete()
+                    await m.delete()
                     await message.delete()
             except KeyError:
                 await save_group_settings(message.chat.id, 'auto_delete', True)
