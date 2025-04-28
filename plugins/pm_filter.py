@@ -1670,9 +1670,9 @@ async def handle_close_data(callback_query: types.CallbackQuery):
                 return await auto_filter(client, message)
                 await ai_sts.delete()
                 return await advantage_spell_chok(client, message)
+            else:
+                return
         else:
-            return
-    else:
         message = msg.message.reply_to_message
         search, files, offset, total_results = spoll
         m=await message.reply_text(f'🤖 <i>{search} <b>sᴇᴀʀᴄʜɪɴɢ...</b></i>')
